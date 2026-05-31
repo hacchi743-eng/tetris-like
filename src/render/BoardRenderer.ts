@@ -388,9 +388,9 @@ export class BoardRenderer {
       );
     }
 
-    this.speedText?.setText(
-      `SPEED\n${speedLevel}`
-    );
+this.speedText?.setText(
+  `SPEED\n${speedLevel}\nTEST`
+);
   }
 
   gameOverText?: Phaser.GameObjects.Text;
