@@ -58,6 +58,11 @@ export class BoardRenderer {
       .setPadding(10)
       .setName("PAUSE")
       .setInteractive();
+
+      this.pauseButton.setData(
+        "action",
+        "PAUSE"
+      );
   }
 
   render(
@@ -246,7 +251,7 @@ export class BoardRenderer {
         .setOrigin(0)
         .setInteractive();
 
-      bg.setName(b.label);
+      bg.setData("action", b.label);
 
       this.scene.add
         .text(
@@ -322,8 +327,12 @@ export class BoardRenderer {
           )
           .setOrigin(0.5)
           .setPadding(20)
-          .setName("RETRY")
           .setInteractive();
+
+      this.retryButton.setData(
+        "action",
+        "RETRY"
+      );
 
       this.speedDownButton =
         this.scene.add
@@ -339,14 +348,18 @@ export class BoardRenderer {
           )
           .setOrigin(0.5)
           .setPadding(20)
-          .setName("SPEED_DOWN")
           .setInteractive();
+
+      this.speedDownButton.setData(
+        "action",
+        "SPEED_DOWN"
+      );
 
       this.speedText =
         this.scene.add.text(
           210,
           380,
-          `SPEED \n\n${speedLevel}`,
+          `SPEED\n${speedLevel}`,
           {
             fontSize: "28px",
           }
@@ -367,12 +380,16 @@ export class BoardRenderer {
           )
           .setOrigin(0.5)
           .setPadding(20)
-          .setName("SPEED_UP")
           .setInteractive();
+
+      this.speedUpButton.setData(
+        "action",
+        "SPEED_UP"
+      );
     }
 
     this.speedText?.setText(
-      `SPEED ${speedLevel}`
+      `SPEED\n${speedLevel}`
     );
   }
 

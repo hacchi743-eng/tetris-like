@@ -78,20 +78,23 @@ export class GameScene extends Phaser.Scene {
         _: Phaser.Input.Pointer,
         obj: Phaser.GameObjects.GameObject
       ) => {
-        switch (obj.name) {
-          case "◁":
+        const action =
+          obj.getData?.("action");
+
+        switch (action) {
+          case "LEFT":
             this.gameLogic.moveLeft();
             break;
 
-          case "▷":
+          case "RIGHT":
             this.gameLogic.moveRight();
             break;
 
-          case "▽":
+          case "DROP":
             this.gameLogic.hardDrop();
             break;
 
-          case "↻":
+          case "ROTATE":
             this.gameLogic.rotate();
             break;
 
