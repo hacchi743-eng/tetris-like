@@ -219,18 +219,18 @@ export class BoardRenderer {
 
       {
         label: "↻",
-        x: 340,
-        y: 660,
+        x: 320,
+        y: 680,
         width: 90,
         height: 60,
       },
 
       {
         label: "HOLD",
-        x: 320,
-        y: 610,
-        width: 110,
-        height: 50,
+        x: 340,
+        y: 580,
+        width: 90,
+        height: 60,
       },
     ];
 
@@ -346,7 +346,7 @@ export class BoardRenderer {
         this.scene.add.text(
           210,
           380,
-          `SPEED \n${speedLevel}`,
+          `SPEED \n\n${speedLevel}`,
           {
             fontSize: "28px",
           }

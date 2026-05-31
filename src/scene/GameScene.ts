@@ -107,13 +107,13 @@ export class GameScene extends Phaser.Scene {
             this.gameLogic.restart();
             break;
 
-          case "-":
+          case "SPEED_DOWN":
             this.gameLogic.setSpeed(
               this.gameLogic.speedLevel - 1
             );
             break;
 
-          case "+":
+          case "SPEED_UP":
             this.gameLogic.setSpeed(
               this.gameLogic.speedLevel + 1
             );
