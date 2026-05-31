@@ -362,6 +362,7 @@ export class BoardRenderer {
           `SPEED\n${speedLevel}`,
           {
             fontSize: "28px",
+            align: "center"
           }
         )
         .setOrigin(0.5);
@@ -388,9 +389,9 @@ export class BoardRenderer {
       );
     }
 
-this.speedText?.setText(
-  `SPEED\n${speedLevel}\nTEST`
-);
+    this.speedText?.setText(
+      `SPEED\n${speedLevel}`
+    );
   }
 
   gameOverText?: Phaser.GameObjects.Text;

@@ -53,10 +53,9 @@ export class Game {
   }
 
   setSpeed(level: number) {
-    this.speedLevel = Phaser.Math.Clamp(
-      level,
+    this.speedLevel = Math.max(
       1,
-      20
+      Math.min(20, level)
     );
   }
 
