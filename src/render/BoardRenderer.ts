@@ -58,14 +58,148 @@ export class BoardRenderer {
     score: number,
     ghostY: number,
     paused: boolean
-  ) {
+  )  {
     this.graphics.clear();
 
     this.scoreText.setText(
       `SCORE: ${score}`
     );
 
+    this.drawGrid(board);
+
+    this.drawBoard(board);
+
+    this.drawGhost(piece, ghostY);
+
+    this.drawPiece(piece);
+
+    this.drawNext(nextPiece);
+
+    this.drawHold(holdPiece);
+
+    this.drawButtons();
+
+    this.drawPauseMenu(paused);
+
+    this.drawGameOver(gameOver);
   }
+
+  drawGrid(board: Board) {
+    this.graphics.lineStyle(1, 0x333333);
+
+    for (let y = 0; y < board.height; y++) {
+      for (let x = 0; x < board.width; x++) {
+        this.graphics.strokeRect(
+          this.offsetX + x * this.cellSize,
+          this.offsetY + y * this.cellSize,
+          this.cellSize,
+          this.cellSize
+        );
+      }
+    }
+  }
+
+ drawBoard(board: Board) {
+    this.graphics.fillStyle(0x6666ff);
+
+    for (let y = 0; y < board.height; y++) {
+      for (let x = 0; x < board.width; x++) {
+        if (board.cells[y][x]) {
+          this.drawCell(x, y);
+        }
+      }
+    }
+  }
+
+  drawPiece(piece: Piece) {
+    this.graphics.fillStyle(0x00ffcc);
+
+    for (const cell of piece.shape) {
+      this.drawCell(
+        piece.x + cell.x,
+        piece.y + cell.y
+      );
+    }
+  }
+
+ drawGhost(piece: Piece, ghostY: number) {
+    this.graphics.fillStyle(0xffffff, 0.3);
+
+    for (const cell of piece.shape) {
+      this.drawCell(
+        piece.x + cell.x,
+        ghostY + cell.y
+      );
+    }
+  }
+
+  drawNext(piece: Piece) {
+    this.graphics.fillStyle(0xffcc00);
+
+    for (const cell of piece.shape) {
+      this.graphics.fillRect(
+        340 + cell.x * 20,
+        120 + cell.y * 20,
+        18,
+        18
+      );
+    }
+  }
+
+  drawHold(piece?: Piece) {
+    if (!piece) return;
+
+    this.graphics.fillStyle(0xff66cc);
+
+    for (const cell of piece.shape) {
+      this.graphics.fillRect(
+        340 + cell.x * 20,
+        260 + cell.y * 20,
+        18,
+        18
+      );
+    }
+  }
+
+  drawCell(x: number, y: number) {
+    this.graphics.fillRect(
+      this.offsetX + x * this.cellSize,
+      this.offsetY + y * this.cellSize,
+      this.cellSize,
+      this.cellSize
+    );
+  }
+
+  buttonsCreated = false;
+
+  drawButtons() {
+    if (this.buttonsCreated) return;
+
+    this.buttonsCreated = true;
+
+    const labels = [
+      "LEFT",
+      "RIGHT",
+      "HOLD",
+      "DROP",
+    ];
+
+    labels.forEach((label, i) => {
+      this.scene.add.text(
+        20 + i * 90,
+        660,
+        label,
+        {
+          fontSize: "24px",
+          backgroundColor: "#444",
+        }
+      )
+      .setPadding(10)
+      .setName(label)
+      .setInteractive();
+    });
+  }
+
 
   drawPauseMenu(paused: boolean) {
     if (!paused) {
