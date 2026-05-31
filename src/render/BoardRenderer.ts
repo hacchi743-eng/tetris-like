@@ -216,7 +216,7 @@ export class BoardRenderer {
 
       {
         label: "▽",
-        x: 220,
+        x: 320,
         y: 680,
         width: 90,
         height: 60,
@@ -224,7 +224,7 @@ export class BoardRenderer {
 
       {
         label: "↻",
-        x: 320,
+        x: 220,
         y: 680,
         width: 90,
         height: 60,
