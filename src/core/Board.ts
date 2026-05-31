@@ -1,7 +1,7 @@
 export class Board {
-  width = 10;
+  width = 15;
 
-  height = 20;
+  height = 30;
 
   cells: number[][];
 
