@@ -79,19 +79,19 @@ setupButtons() {
       obj: Phaser.GameObjects.Text
     ) => {
       switch (obj.name) {
-        case "LEFT":
+        case "◁":
           this.gameLogic.moveLeft();
           break;
 
-        case "RIGHT":
+        case "▷":
           this.gameLogic.moveRight();
           break;
 
-        case "DROP":
+        case "▽":
           this.gameLogic.hardDrop();
           break;
 
-        case "ROTATE":
+        case "↻":
           this.gameLogic.rotate();
           break;
 
@@ -106,46 +106,35 @@ setupButtons() {
         case "RETRY":
           this.gameLogic.restart();
           break;
+
+        case "SPEED_DOWN":
+          this.gameLogic.setSpeed(
+            this.gameLogic.speedLevel - 1
+          );
+          break;
+
+        case "SPEED_UP":
+          this.gameLogic.setSpeed(
+            this.gameLogic.speedLevel + 1
+          );
+          break;
       }
     }
   );
 }
-
- // GameScene.ts update()
-
 update(_: number, delta: number) {
   this.gameLogic.update(delta);
 
-  if (
-    this.boardRenderer.speedInput
-  ) {
-    const value = Number(
-      this.boardRenderer
-        .speedInput.value
-    );
-
-    if (!isNaN(value)) {
-      this.gameLogic.setSpeed(
-        value
-      );
-    }
-  }
-
-  this.boardRenderer.render(
-    this.gameLogic.board,
-    this.gameLogic.piece,
-    this.gameLogic.nextPiece,
-    this.gameLogic.holdPiece,
-    this.gameLogic.gameOver,
-    this.gameLogic.score,
-    this.gameLogic.getGhostY(),
-    this.gameLogic.paused,
-    this.gameLogic.speedLevel
-  );
-
-  this.boardRenderer.drawPauseMenu(
-    this.gameLogic.paused,
-    this.gameLogic.speedLevel
-  );
+this.boardRenderer.render(
+  this.gameLogic.board,
+  this.gameLogic.piece,
+  this.gameLogic.nextPiece,
+  this.gameLogic.holdPiece,
+  this.gameLogic.gameOver,
+  this.gameLogic.score,
+  this.gameLogic.getGhostY(),
+  this.gameLogic.paused,
+  this.gameLogic.speedLevel
+);
 }
 }

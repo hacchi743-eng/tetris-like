@@ -14,7 +14,14 @@ export class BoardRenderer {
 
   retryButton?: Phaser.GameObjects.Text;
 
-  speedInput?: HTMLInputElement;
+  speedDownButton?:
+  Phaser.GameObjects.Text;
+
+  speedUpButton?:
+    Phaser.GameObjects.Text;
+
+  speedText?:
+    Phaser.GameObjects.Text;
 
   cellSize = 28;
 
@@ -52,41 +59,44 @@ export class BoardRenderer {
       .setInteractive();
   }
 
-  render(
-    board: Board,
-    piece: Piece,
-    nextPiece: Piece,
-    holdPiece: Piece | undefined,
-    gameOver: boolean,
-    score: number,
-    ghostY: number,
-    paused: boolean,
-    speedInput: number
-  )  {
-    this.graphics.clear();
+render(
+  board: Board,
+  piece: Piece,
+  nextPiece: Piece,
+  holdPiece: Piece | undefined,
+  gameOver: boolean,
+  score: number,
+  ghostY: number,
+  paused: boolean,
+  speedLevel: number
+) {
+  this.graphics.clear();
 
-    this.scoreText.setText(
-      `SCORE: ${score}`
-    );
+  this.scoreText.setText(
+    `SCORE: ${score}`
+  );
 
-    this.drawGrid(board);
+  this.drawGrid(board);
 
-    this.drawBoard(board);
+  this.drawBoard(board);
 
-    this.drawGhost(piece, ghostY);
+  this.drawGhost(piece, ghostY);
 
-    this.drawPiece(piece);
+  this.drawPiece(piece);
 
-    this.drawNext(nextPiece);
+  this.drawNext(nextPiece);
 
-    this.drawHold(holdPiece);
+  this.drawHold(holdPiece);
 
-    this.drawButtons();
+  this.drawButtons();
 
-    this.drawPauseMenu(paused,speedInput);
+  this.drawPauseMenu(
+    paused,
+    speedLevel
+  );
 
-    this.drawGameOver(gameOver);
-  }
+  this.drawGameOver(gameOver);
+}
 
   drawGrid(board: Board) {
     this.graphics.lineStyle(1, 0x333333);
@@ -231,6 +241,9 @@ drawButtons() {
 }
 
 
+// BoardRenderer.ts
+// drawPauseMenu()
+
 drawPauseMenu(
   paused: boolean,
   speedLevel: number
@@ -238,14 +251,33 @@ drawPauseMenu(
   if (!paused) {
     if (this.retryButton) {
       this.retryButton.destroy();
-
-      this.retryButton = undefined;
+      this.retryButton =
+        undefined;
     }
 
-    if (this.speedInput) {
-      this.speedInput.remove();
+    if (
+      this.speedDownButton
+    ) {
+      this.speedDownButton.destroy();
 
-      this.speedInput = undefined;
+      this.speedDownButton =
+        undefined;
+    }
+
+    if (
+      this.speedUpButton
+    ) {
+      this.speedUpButton.destroy();
+
+      this.speedUpButton =
+        undefined;
+    }
+
+    if (this.speedText) {
+      this.speedText.destroy();
+
+      this.speedText =
+        undefined;
     }
 
     return;
@@ -256,7 +288,7 @@ drawPauseMenu(
       this.scene.add
         .text(
           140,
-          300,
+          260,
           "RETRY",
           {
             fontSize: "32px",
@@ -268,37 +300,52 @@ drawPauseMenu(
         .setName("RETRY")
         .setInteractive();
 
-    this.speedInput =
-      document.createElement(
-        "input"
+    this.speedDownButton =
+      this.scene.add
+        .text(
+          80,
+          360,
+          "-",
+          {
+            fontSize: "40px",
+            backgroundColor:
+              "#444",
+          }
+        )
+        .setPadding(20)
+        .setName("SPEED_DOWN")
+        .setInteractive();
+
+    this.speedText =
+      this.scene.add.text(
+        180,
+        375,
+        `SPEED ${speedLevel}`,
+        {
+          fontSize: "28px",
+        }
       );
 
-    this.speedInput.type =
-      "number";
-
-    this.speedInput.min = "1";
-
-    this.speedInput.max = "20";
-
-    this.speedInput.value =
-      String(speedLevel);
-
-    this.speedInput.style.position =
-      "absolute";
-
-    this.speedInput.style.left =
-      "20px";
-
-    this.speedInput.style.top =
-      "80px";
-
-    this.speedInput.style.width =
-      "80px";
-
-    document.body.appendChild(
-      this.speedInput
-    );
+    this.speedUpButton =
+      this.scene.add
+        .text(
+          340,
+          360,
+          "+",
+          {
+            fontSize: "40px",
+            backgroundColor:
+              "#444",
+          }
+        )
+        .setPadding(20)
+        .setName("SPEED_UP")
+        .setInteractive();
   }
+
+  this.speedText?.setText(
+    `SPEED ${speedLevel}`
+  );
 }
 
   gameOverText?: Phaser.GameObjects.Text;
