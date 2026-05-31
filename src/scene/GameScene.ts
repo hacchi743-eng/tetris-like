@@ -71,66 +71,83 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
+// GameScene.ts
+
 setupButtons() {
-    this.input.on(
-      "gameobjectdown",
-      (
-        _: Phaser.Input.Pointer,
-        obj: Phaser.GameObjects.Text
-      ) => {
-        switch (obj.name) {
-          case "LEFT":
-            this.gameLogic.moveLeft();
-            break;
+  this.input.on(
+    "gameobjectdown",
+    (
+      _: Phaser.Input.Pointer,
+      obj: Phaser.GameObjects.Text
+    ) => {
+      switch (obj.name) {
+        case "LEFT":
+          this.gameLogic.moveLeft();
+          break;
 
-          case "RIGHT":
-            this.gameLogic.moveRight();
-            break;
+        case "RIGHT":
+          this.gameLogic.moveRight();
+          break;
 
-          case "HOLD":
-            this.gameLogic.hold();
-            break;
+        case "DROP":
+          this.gameLogic.hardDrop();
+          break;
 
-          case "DROP":
-            this.gameLogic.hardDrop();
-            break;
-        }
+        case "ROTATE":
+          this.gameLogic.rotate();
+          break;
 
-        if (obj.text === "PAUSE") {
-          this.gameLogic.togglePause();
-        }
-
-        if (obj.text === "RETRY") {
-          this.gameLogic.restart();
-        }
+        case "HOLD":
+          this.gameLogic.hold();
+          break;
       }
-    );
-  }
 
-  update(_: number, delta: number) {
-    this.gameLogic.update(delta);
+      if (obj.text === "PAUSE") {
+        this.gameLogic.togglePause();
+      }
 
-    if (
-      this.boardRenderer.speedInput
-    ) {
-      const value = Number(
-        this.boardRenderer.speedInput.value
-      );
-
-      if (!isNaN(value)) {
-        this.gameLogic.fallInterval = value;
+      if (obj.text === "RETRY") {
+        this.gameLogic.restart();
       }
     }
+  );
+}
 
-    this.boardRenderer.render(
-      this.gameLogic.board,
-      this.gameLogic.piece,
-      this.gameLogic.nextPiece,
-      this.gameLogic.holdPiece,
-      this.gameLogic.gameOver,
-      this.gameLogic.score,
-      this.gameLogic.getGhostY(),
-      this.gameLogic.paused
+ // GameScene.ts update()
+
+update(_: number, delta: number) {
+  this.gameLogic.update(delta);
+
+  if (
+    this.boardRenderer.speedInput
+  ) {
+    const value = Number(
+      this.boardRenderer
+        .speedInput.value
     );
+
+    if (!isNaN(value)) {
+      this.gameLogic.setSpeed(
+        value
+      );
+    }
   }
+
+  this.boardRenderer.render(
+    this.gameLogic.board,
+    this.gameLogic.piece,
+    this.gameLogic.nextPiece,
+    this.gameLogic.holdPiece,
+    this.gameLogic.gameOver,
+    this.gameLogic.score,
+    this.gameLogic.getGhostY(),
+    this.gameLogic.paused,
+    this.gameLogic.speedLevel
+  );
+
+  this.boardRenderer.drawPauseMenu(
+    this.gameLogic.paused,
+    this.gameLogic.speedLevel
+  );
+}
 }

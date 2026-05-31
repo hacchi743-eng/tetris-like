@@ -57,7 +57,8 @@ export class BoardRenderer {
     gameOver: boolean,
     score: number,
     ghostY: number,
-    paused: boolean
+    paused: boolean,
+    speedInput: number
   )  {
     this.graphics.clear();
 
@@ -79,7 +80,7 @@ export class BoardRenderer {
 
     this.drawButtons();
 
-    this.drawPauseMenu(paused);
+    this.drawPauseMenu(paused,speedInput);
 
     this.drawGameOver(gameOver);
   }
@@ -172,106 +173,196 @@ export class BoardRenderer {
 
   buttonsCreated = false;
 
-  drawButtons() {
-    if (this.buttonsCreated) return;
+drawButtons() {
+  if (this.buttonsCreated) return;
 
-    this.buttonsCreated = true;
+  this.buttonsCreated = true;
 
-    const labels = [
-      "LEFT",
-      "RIGHT",
-      "HOLD",
-      "DROP",
-    ];
+  const buttons = [
+    {
+      label: "LEFT",
+      x: 20,
+      y: 680,
+    },
 
-    labels.forEach((label, i) => {
-      this.scene.add.text(
-        20 + i * 90,
-        660,
-        label,
+    {
+      label: "RIGHT",
+      x: 120,
+      y: 680,
+    },
+
+    {
+      label: "DROP",
+      x: 220,
+      y: 680,
+    },
+
+    {
+      label: "ROTATE",
+      x: 320,
+      y: 680,
+    },
+
+    {
+      label: "HOLD",
+      x: 220,
+      y: 610,
+    },
+  ];
+
+  buttons.forEach((b) => {
+    this.scene.add
+      .text(
+        b.x,
+        b.y,
+        b.label,
         {
           fontSize: "24px",
           backgroundColor: "#444",
         }
       )
       .setPadding(10)
-      .setName(label)
+      .setName(b.label)
       .setInteractive();
-    });
-  }
+  });
+}
 
 
-  drawPauseMenu(paused: boolean) {
-    if (!paused) {
-      if (this.retryButton) {
-        this.retryButton.destroy();
-        this.retryButton = undefined;
-      }
+// BoardRenderer.ts
 
-      if (this.speedInput) {
-        this.speedInput.remove();
-        this.speedInput = undefined;
-      }
+drawPauseMenu(
+  paused: boolean,
+  speedLevel: number
+) {
+  if (!paused) {
+    if (this.retryButton) {
+      this.retryButton.destroy();
 
-      return;
+      this.retryButton = undefined;
     }
 
-    if (!this.retryButton) {
-      this.retryButton = this.scene.add.text(
-        140,
-        300,
-        "RETRY",
-        {
-          fontSize: "32px",
-          backgroundColor: "#880000",
-        }
-      )
-      .setPadding(20)
-      .setInteractive();
+    if (this.speedInput) {
+      this.speedInput.remove();
 
-      this.speedInput = document.createElement(
+      this.speedInput = undefined;
+    }
+
+    return;
+  }
+
+  if (!this.retryButton) {
+    this.retryButton =
+      this.scene.add
+        .text(
+          140,
+          300,
+          "RETRY",
+          {
+            fontSize: "32px",
+            backgroundColor:
+              "#880000",
+          }
+        )
+        .setPadding(20)
+        .setInteractive();
+
+    this.speedInput =
+      document.createElement(
         "input"
       );
 
-      this.speedInput.type = "number";
+    this.speedInput.type =
+      "number";
 
-      this.speedInput.value = "500";
+    this.speedInput.min = "1";
 
-      this.speedInput.style.position = "absolute";
-      this.speedInput.style.left = "20px";
-      this.speedInput.style.top = "80px";
-      this.speedInput.style.width = "100px";
+    this.speedInput.max = "20";
 
-      document.body.appendChild(
-        this.speedInput
-      );
-    }
+    this.speedInput.value =
+      String(speedLevel);
+
+    this.speedInput.style.position =
+      "absolute";
+
+    this.speedInput.style.left =
+      "20px";
+
+    this.speedInput.style.top =
+      "80px";
+
+    this.speedInput.style.width =
+      "80px";
+
+    document.body.appendChild(
+      this.speedInput
+    );
   }
+}
 
   gameOverText?: Phaser.GameObjects.Text;
+
+ gameOverRetryButton?: Phaser.GameObjects.Text;
 
   drawGameOver(gameOver: boolean) {
     if (!gameOver) {
       if (this.gameOverText) {
         this.gameOverText.destroy();
-        this.gameOverText = undefined;
+
+        this.gameOverText =
+          undefined;
+      }
+
+      if (
+        this.gameOverRetryButton
+      ) {
+        this.gameOverRetryButton.destroy();
+
+        this.gameOverRetryButton =
+          undefined;
       }
 
       return;
     }
 
     if (!this.gameOverText) {
-      this.gameOverText = this.scene.add
-        .text(
-          this.scene.cameras.main.centerX,
-          this.scene.cameras.main.centerY,
-          "GAME OVER",
-          {
-            fontSize: "40px",
-            color: "#ff0000",
-          }
-        )
-        .setOrigin(0.5);
+      this.gameOverText =
+        this.scene.add
+          .text(
+            this.scene.cameras.main
+              .centerX,
+
+            this.scene.cameras.main
+              .centerY - 60,
+
+            "GAME OVER",
+
+            {
+              fontSize: "40px",
+              color: "#ff0000",
+            }
+          )
+          .setOrigin(0.5);
+
+      this.gameOverRetryButton =
+        this.scene.add
+          .text(
+            this.scene.cameras.main
+              .centerX,
+
+            this.scene.cameras.main
+              .centerY + 20,
+
+            "RETRY",
+
+            {
+              fontSize: "32px",
+              backgroundColor:
+                "#880000",
+            }
+          )
+          .setOrigin(0.5)
+          .setPadding(20)
+          .setInteractive();
     }
   }
 }

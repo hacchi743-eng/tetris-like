@@ -1,3 +1,5 @@
+// Game.ts
+
 import { Board } from "./Board";
 import { Piece } from "./Piece";
 
@@ -20,9 +22,18 @@ export class Game {
 
   fallTimer = 0;
 
-  fallInterval = 500;
+  speedLevel = 10;
 
   lastRotate = false;
+
+  get fallInterval() {
+    // 1～20段階
+    // 数字大きいほど速い
+
+    return (
+      1050 - this.speedLevel * 50
+    );
+  }
 
   update(delta: number) {
     if (this.gameOver) return;
@@ -31,11 +42,22 @@ export class Game {
 
     this.fallTimer += delta;
 
-    if (this.fallTimer >= this.fallInterval) {
+    if (
+      this.fallTimer >=
+      this.fallInterval
+    ) {
       this.fallTimer = 0;
 
       this.moveDown();
     }
+  }
+
+  setSpeed(level: number) {
+    this.speedLevel = Phaser.Math.Clamp(
+      level,
+      1,
+      20
+    );
   }
 
   togglePause() {
@@ -43,11 +65,15 @@ export class Game {
   }
 
   restart() {
+    const keepSpeed =
+      this.speedLevel;
+
     this.board = new Board();
 
     this.piece = Piece.random();
 
-    this.nextPiece = Piece.random();
+    this.nextPiece =
+      Piece.random();
 
     this.holdPiece = undefined;
 
@@ -58,12 +84,22 @@ export class Game {
     this.paused = false;
 
     this.score = 0;
+
+    this.fallTimer = 0;
+
+    this.speedLevel = keepSpeed;
   }
 
   moveLeft() {
     if (this.paused) return;
 
-    if (!this.isColliding(this.piece, -1, 0)) {
+    if (
+      !this.isColliding(
+        this.piece,
+        -1,
+        0
+      )
+    ) {
       this.piece.x--;
     }
   }
@@ -71,7 +107,13 @@ export class Game {
   moveRight() {
     if (this.paused) return;
 
-    if (!this.isColliding(this.piece, 1, 0)) {
+    if (
+      !this.isColliding(
+        this.piece,
+        1,
+        0
+      )
+    ) {
       this.piece.x++;
     }
   }
@@ -79,7 +121,13 @@ export class Game {
   moveDown() {
     if (this.paused) return;
 
-    if (!this.isColliding(this.piece, 0, 1)) {
+    if (
+      !this.isColliding(
+        this.piece,
+        0,
+        1
+      )
+    ) {
       this.piece.y++;
 
       return;
@@ -122,7 +170,8 @@ export class Game {
     this.canHold = false;
 
     if (!this.holdPiece) {
-      this.holdPiece = Piece.random();
+      this.holdPiece =
+        Piece.random();
 
       Object.assign(
         this.holdPiece,
@@ -136,7 +185,8 @@ export class Game {
 
     const temp = this.holdPiece;
 
-    this.holdPiece = Piece.random();
+    this.holdPiece =
+      Piece.random();
 
     Object.assign(
       this.holdPiece,
@@ -150,31 +200,51 @@ export class Game {
   }
 
   rotate() {
-    const backup = structuredClone(this.piece.shape);
+    const backup =
+      structuredClone(
+        this.piece.shape
+      );
 
     this.piece.rotate();
 
     this.lastRotate = true;
 
-    if (!this.isColliding(this.piece, 0, 0)) {
+    if (
+      !this.isColliding(
+        this.piece,
+        0,
+        0
+      )
+    ) {
       return;
     }
 
-    if (!this.isColliding(this.piece, -1, 0)) {
+    if (
+      !this.isColliding(
+        this.piece,
+        -1,
+        0
+      )
+    ) {
       this.piece.x--;
 
       return;
     }
 
-    if (!this.isColliding(this.piece, 1, 0)) {
+    if (
+      !this.isColliding(
+        this.piece,
+        1,
+        0
+      )
+    ) {
       this.piece.x++;
 
       return;
     }
-     this.piece.shape = backup;
-  }
 
-    
+    this.piece.shape = backup;
+  }
 
   isColliding(
     piece: Piece,
@@ -182,9 +252,15 @@ export class Game {
     offsetY: number
   ) {
     for (const cell of piece.shape) {
-      const x = piece.x + cell.x + offsetX;
+      const x =
+        piece.x +
+        cell.x +
+        offsetX;
 
-      const y = piece.y + cell.y + offsetY;
+      const y =
+        piece.y +
+        cell.y +
+        offsetY;
 
       if (x < 0) return true;
 
@@ -205,9 +281,11 @@ export class Game {
 
   fixPiece() {
     for (const cell of this.piece.shape) {
-      const x = this.piece.x + cell.x;
+      const x =
+        this.piece.x + cell.x;
 
-      const y = this.piece.y + cell.y;
+      const y =
+        this.piece.y + cell.y;
 
       if (
         y >= 0 &&
@@ -219,22 +297,29 @@ export class Game {
   }
 
   clearLines() {
-    const before = this.board.cells.length;
+    const before =
+      this.board.cells.length;
 
-    this.board.cells = this.board.cells.filter(
-      (row) =>
-        row.some((cell) => cell === 0)
-    );
+    this.board.cells =
+      this.board.cells.filter(
+        (row) =>
+          row.some(
+            (cell) => cell === 0
+          )
+      );
 
     const cleared =
-      before - this.board.cells.length;
+      before -
+      this.board.cells.length;
 
     while (
       this.board.cells.length <
       this.board.height
     ) {
       this.board.cells.unshift(
-        Array(this.board.width).fill(0)
+        Array(this.board.width).fill(
+          0
+        )
       );
     }
 
@@ -258,7 +343,8 @@ export class Game {
     this.piece.x = 3;
     this.piece.y = 0;
 
-    this.nextPiece = Piece.random();
+    this.nextPiece =
+      Piece.random();
 
     if (
       this.isColliding(
