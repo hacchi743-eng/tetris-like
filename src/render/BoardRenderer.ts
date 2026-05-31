@@ -14,14 +14,15 @@ export class BoardRenderer {
 
   retryButton?: Phaser.GameObjects.Text;
 
-  speedDownButton?:
-  Phaser.GameObjects.Text;
+  speedDownButton?: Phaser.GameObjects.Text;
 
-  speedUpButton?:
-    Phaser.GameObjects.Text;
+  speedUpButton?: Phaser.GameObjects.Text;
 
-  speedText?:
-    Phaser.GameObjects.Text;
+  speedText?: Phaser.GameObjects.Text;
+  
+  pauseOverlay?: Phaser.GameObjects.Rectangle;
+
+  pausePanel?: Phaser.GameObjects.Rectangle;
 
   cellSize = 28;
 
@@ -59,44 +60,44 @@ export class BoardRenderer {
       .setInteractive();
   }
 
-render(
-  board: Board,
-  piece: Piece,
-  nextPiece: Piece,
-  holdPiece: Piece | undefined,
-  gameOver: boolean,
-  score: number,
-  ghostY: number,
-  paused: boolean,
-  speedLevel: number
-) {
-  this.graphics.clear();
+  render(
+    board: Board,
+    piece: Piece,
+    nextPiece: Piece,
+    holdPiece: Piece | undefined,
+    gameOver: boolean,
+    score: number,
+    ghostY: number,
+    paused: boolean,
+    speedLevel: number
+  ) {
+    this.graphics.clear();
 
-  this.scoreText.setText(
-    `SCORE: ${score}`
-  );
+    this.scoreText.setText(
+      `SCORE: ${score}`
+    );
 
-  this.drawGrid(board);
+    this.drawGrid(board);
 
-  this.drawBoard(board);
+    this.drawBoard(board);
 
-  this.drawGhost(piece, ghostY);
+    this.drawGhost(piece, ghostY);
 
-  this.drawPiece(piece);
+    this.drawPiece(piece);
 
-  this.drawNext(nextPiece);
+    this.drawNext(nextPiece);
 
-  this.drawHold(holdPiece);
+    this.drawHold(holdPiece);
 
-  this.drawButtons();
+    this.drawButtons();
 
-  this.drawPauseMenu(
-    paused,
-    speedLevel
-  );
+    this.drawPauseMenu(
+      paused,
+      speedLevel
+    );
 
-  this.drawGameOver(gameOver);
-}
+    this.drawGameOver(gameOver);
+  }
 
   drawGrid(board: Board) {
     this.graphics.lineStyle(1, 0x333333);
@@ -186,171 +187,198 @@ render(
 
   buttonsCreated = false;
 
-drawButtons() {
-  if (this.buttonsCreated) return;
+  drawButtons() {
+    if (this.buttonsCreated) return;
 
-  this.buttonsCreated = true;
+    this.buttonsCreated = true;
 
-  const buttons = [
-    {
-      label: "◁",
-      x: 20,
-      y: 680,
-    },
+    const buttons = [
+      {
+        label: "◁",
+        x: 20,
+        y: 680,
+        width: 90,
+        height: 60,
+      },
 
-    {
-      label: "▷",
-      x: 120,
-      y: 680,
-    },
+      {
+        label: "▷",
+        x: 120,
+        y: 680,
+        width: 90,
+        height: 60,
+      },
 
-    {
-      label: "▽",
-      x: 220,
-      y: 680,
-    },
+      {
+        label: "▽",
+        x: 220,
+        y: 680,
+        width: 110,
+        height: 60,
+      },
 
-    {
-      label: "↻",
-      x: 320,
-      y: 680,
-    },
+      {
+        label: "↻",
+        x: 340,
+        y: 660,
+        width: 70,
+        height: 100,
+      },
 
-    {
-      label: "HOLD",
-      x: 320,
-      y: 610,
-    },
-  ];
+      {
+        label: "HOLD",
+        x: 220,
+        y: 610,
+        width: 110,
+        height: 50,
+      },
+    ];
 
-  buttons.forEach((b) => {
-    this.scene.add
-      .text(
-        b.x,
-        b.y,
-        b.label,
-        {
-          fontSize: "24px",
-          backgroundColor: "#444",
-        }
-      )
-      .setPadding(10)
-      .setName(b.label)
-      .setInteractive();
-  });
-}
+    buttons.forEach((b) => {
+      const bg = this.scene.add
+        .rectangle(
+          b.x,
+          b.y,
+          b.width,
+          b.height,
+          0x444444
+        )
+        .setOrigin(0)
+        .setInteractive();
 
+      bg.setName(b.label);
 
-// BoardRenderer.ts
-// drawPauseMenu()
+      this.scene.add
+        .text(
+          b.x + b.width / 2,
+          b.y + b.height / 2,
+          b.label,
+          {
+            fontSize: "22px",
+          }
+        )
+        .setOrigin(0.5);
+    });
+  }
 
-drawPauseMenu(
-  paused: boolean,
-  speedLevel: number
-) {
-  if (!paused) {
-    if (this.retryButton) {
-      this.retryButton.destroy();
-      this.retryButton =
-        undefined;
+  drawPauseMenu(
+    paused: boolean,
+    speedLevel: number
+  ) {
+    if (!paused) {
+      this.pauseOverlay?.destroy();
+      this.pauseOverlay = undefined;
+
+      this.pausePanel?.destroy();
+      this.pausePanel = undefined;
+
+      this.retryButton?.destroy();
+      this.retryButton = undefined;
+
+      this.speedDownButton?.destroy();
+      this.speedDownButton = undefined;
+
+      this.speedUpButton?.destroy();
+      this.speedUpButton = undefined;
+
+      this.speedText?.destroy();
+      this.speedText = undefined;
+
+      return;
     }
 
-    if (
-      this.speedDownButton
-    ) {
-      this.speedDownButton.destroy();
+    if (!this.pauseOverlay) {
+      this.pauseOverlay =
+        this.scene.add.rectangle(
+          0,
+          0,
+          420,
+          760,
+          0x000000,
+          0.5
+        )
+        .setOrigin(0);
+
+      this.pausePanel =
+        this.scene.add.rectangle(
+          210,
+          340,
+          280,
+          240,
+          0x222222
+        );
+
+      this.retryButton =
+        this.scene.add
+          .text(
+            210,
+            270,
+            "RETRY",
+            {
+              fontSize: "32px",
+              backgroundColor:
+                "#880000",
+            }
+          )
+          .setOrigin(0.5)
+          .setPadding(20)
+          .setName("RETRY")
+          .setInteractive();
 
       this.speedDownButton =
-        undefined;
-    }
-
-    if (
-      this.speedUpButton
-    ) {
-      this.speedUpButton.destroy();
-
-      this.speedUpButton =
-        undefined;
-    }
-
-    if (this.speedText) {
-      this.speedText.destroy();
+        this.scene.add
+          .text(
+            120,
+            380,
+            "-",
+            {
+              fontSize: "40px",
+              backgroundColor:
+                "#444",
+            }
+          )
+          .setOrigin(0.5)
+          .setPadding(20)
+          .setName("SPEED_DOWN")
+          .setInteractive();
 
       this.speedText =
-        undefined;
+        this.scene.add.text(
+          210,
+          380,
+          `SPEED ${speedLevel}`,
+          {
+            fontSize: "28px",
+          }
+        )
+        .setOrigin(0.5);
+
+      this.speedUpButton =
+        this.scene.add
+          .text(
+            300,
+            380,
+            "+",
+            {
+              fontSize: "40px",
+              backgroundColor:
+                "#444",
+            }
+          )
+          .setOrigin(0.5)
+          .setPadding(20)
+          .setName("SPEED_UP")
+          .setInteractive();
     }
 
-    return;
+    this.speedText?.setText(
+      `SPEED ${speedLevel}`
+    );
   }
-
-  if (!this.retryButton) {
-    this.retryButton =
-      this.scene.add
-        .text(
-          140,
-          260,
-          "RETRY",
-          {
-            fontSize: "32px",
-            backgroundColor:
-              "#880000",
-          }
-        )
-        .setPadding(20)
-        .setName("RETRY")
-        .setInteractive();
-
-    this.speedDownButton =
-      this.scene.add
-        .text(
-          80,
-          360,
-          "-",
-          {
-            fontSize: "40px",
-            backgroundColor:
-              "#444",
-          }
-        )
-        .setPadding(20)
-        .setName("SPEED_DOWN")
-        .setInteractive();
-
-    this.speedText =
-      this.scene.add.text(
-        180,
-        375,
-        `SPEED ${speedLevel}`,
-        {
-          fontSize: "28px",
-        }
-      );
-
-    this.speedUpButton =
-      this.scene.add
-        .text(
-          340,
-          360,
-          "+",
-          {
-            fontSize: "40px",
-            backgroundColor:
-              "#444",
-          }
-        )
-        .setPadding(20)
-        .setName("SPEED_UP")
-        .setInteractive();
-  }
-
-  this.speedText?.setText(
-    `SPEED ${speedLevel}`
-  );
-}
 
   gameOverText?: Phaser.GameObjects.Text;
 
- gameOverRetryButton?: Phaser.GameObjects.Text;
+  gameOverRetryButton?: Phaser.GameObjects.Text;
 
   drawGameOver(gameOver: boolean) {
     if (!gameOver) {

@@ -71,70 +71,71 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
-setupButtons() {
-  this.input.on(
-    "gameobjectdown",
-    (
-      _: Phaser.Input.Pointer,
-      obj: Phaser.GameObjects.Text
-    ) => {
-      switch (obj.name) {
-        case "◁":
-          this.gameLogic.moveLeft();
-          break;
+  setupButtons() {
+    this.input.on(
+      "gameobjectdown",
+      (
+        _: Phaser.Input.Pointer,
+        obj: Phaser.GameObjects.GameObject
+      ) => {
+        switch (obj.name) {
+          case "LEFT":
+            this.gameLogic.moveLeft();
+            break;
 
-        case "▷":
-          this.gameLogic.moveRight();
-          break;
+          case "RIGHT":
+            this.gameLogic.moveRight();
+            break;
 
-        case "▽":
-          this.gameLogic.hardDrop();
-          break;
+          case "DROP":
+            this.gameLogic.hardDrop();
+            break;
 
-        case "↻":
-          this.gameLogic.rotate();
-          break;
+          case "ROTATE":
+            this.gameLogic.rotate();
+            break;
 
-        case "HOLD":
-          this.gameLogic.hold();
-          break;
+          case "HOLD":
+            this.gameLogic.hold();
+            break;
 
-        case "PAUSE":
-          this.gameLogic.togglePause();
-          break;
+          case "PAUSE":
+            this.gameLogic.togglePause();
+            break;
 
-        case "RETRY":
-          this.gameLogic.restart();
-          break;
+          case "RETRY":
+            this.gameLogic.restart();
+            break;
 
-        case "SPEED_DOWN":
-          this.gameLogic.setSpeed(
-            this.gameLogic.speedLevel - 1
-          );
-          break;
+          case "SPEED_DOWN":
+            this.gameLogic.setSpeed(
+              this.gameLogic.speedLevel - 1
+            );
+            break;
 
-        case "SPEED_UP":
-          this.gameLogic.setSpeed(
-            this.gameLogic.speedLevel + 1
-          );
-          break;
+          case "SPEED_UP":
+            this.gameLogic.setSpeed(
+              this.gameLogic.speedLevel + 1
+            );
+            break;
+        }
       }
-    }
-  );
-}
-update(_: number, delta: number) {
-  this.gameLogic.update(delta);
+    );
+  }
 
-this.boardRenderer.render(
-  this.gameLogic.board,
-  this.gameLogic.piece,
-  this.gameLogic.nextPiece,
-  this.gameLogic.holdPiece,
-  this.gameLogic.gameOver,
-  this.gameLogic.score,
-  this.gameLogic.getGhostY(),
-  this.gameLogic.paused,
-  this.gameLogic.speedLevel
-);
-}
+  update(_: number, delta: number) {
+    this.gameLogic.update(delta);
+
+  this.boardRenderer.render(
+    this.gameLogic.board,
+    this.gameLogic.piece,
+    this.gameLogic.nextPiece,
+    this.gameLogic.holdPiece,
+    this.gameLogic.gameOver,
+    this.gameLogic.score,
+    this.gameLogic.getGhostY(),
+    this.gameLogic.paused,
+    this.gameLogic.speedLevel
+  );
+  }
 }
