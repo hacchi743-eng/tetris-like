@@ -24,7 +24,7 @@ export class BoardRenderer {
 
   pausePanel?: Phaser.GameObjects.Rectangle;
 
-  cellSize = 28;
+  cellSize = 18;
 
   offsetX = 40;
 
