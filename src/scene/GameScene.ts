@@ -15,6 +15,12 @@ export class GameScene extends Phaser.Scene {
     this.boardRenderer =
       new BoardRenderer(this);
 
+    this.setupKeyboard();
+
+    this.setupButtons();
+  }
+
+  setupKeyboard() {
     this.input.keyboard?.on(
       "keydown-LEFT",
       () => {
@@ -43,50 +49,88 @@ export class GameScene extends Phaser.Scene {
       }
     );
 
-    this.setupMobileInput();
+    this.input.keyboard?.on(
+      "keydown-SPACE",
+      () => {
+        this.gameLogic.hardDrop();
+      }
+    );
+
+    this.input.keyboard?.on(
+      "keydown-C",
+      () => {
+        this.gameLogic.hold();
+      }
+    );
+
+    this.input.keyboard?.on(
+      "keydown-ESC",
+      () => {
+        this.gameLogic.togglePause();
+      }
+    );
   }
 
-  update(
-    _: number,
-    delta: number
-  ) {
+setupButtons() {
+    this.input.on(
+      "gameobjectdown",
+      (
+        _: Phaser.Input.Pointer,
+        obj: Phaser.GameObjects.Text
+      ) => {
+        switch (obj.name) {
+          case "LEFT":
+            this.gameLogic.moveLeft();
+            break;
+
+          case "RIGHT":
+            this.gameLogic.moveRight();
+            break;
+
+          case "HOLD":
+            this.gameLogic.hold();
+            break;
+
+          case "DROP":
+            this.gameLogic.hardDrop();
+            break;
+        }
+
+        if (obj.text === "PAUSE") {
+          this.gameLogic.togglePause();
+        }
+
+        if (obj.text === "RETRY") {
+          this.gameLogic.restart();
+        }
+      }
+    );
+  }
+
+  update(_: number, delta: number) {
     this.gameLogic.update(delta);
+
+    if (
+      this.boardRenderer.speedInput
+    ) {
+      const value = Number(
+        this.boardRenderer.speedInput.value
+      );
+
+      if (!isNaN(value)) {
+        this.gameLogic.fallInterval = value;
+      }
+    }
 
     this.boardRenderer.render(
       this.gameLogic.board,
       this.gameLogic.piece,
       this.gameLogic.nextPiece,
-      this.gameLogic.gameOver
-    );
-  }
-
-  setupMobileInput() {
-    this.input.on(
-      "pointerdown",
-      (pointer: Phaser.Input.Pointer) => {
-        const x = pointer.x;
-        const y = pointer.y;
-
-        if (y > 500) {
-          this.gameLogic.moveDown();
-
-          return;
-        }
-
-        if (x < 120) {
-          this.gameLogic.moveLeft();
-
-          return;
-        }
-
-        if (x > 240) {
-          this.gameLogic.moveRight();
-
-          return;
-        }
-
-        this.gameLogic.rotate();
-      }
+      this.gameLogic.holdPiece,
+      this.gameLogic.gameOver,
+      this.gameLogic.score,
+      this.gameLogic.getGhostY(),
+      this.gameLogic.paused
     );
   }
 }

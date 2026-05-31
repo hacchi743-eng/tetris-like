@@ -65,18 +65,36 @@ export const SHAPES: Shape[] = [
 
 export class Piece {
   x = 3;
+
   y = 0;
 
   shape: Shape;
 
-  constructor(shape?: Shape) {
+  isT = false;
+
+  constructor(shape?: Shape, isT = false) {
     this.shape =
       shape ??
-      SHAPES[
-        Math.floor(
-          Math.random() * SHAPES.length
-        )
-      ];
+      structuredClone(
+        SHAPES[
+          Math.floor(
+            Math.random() * SHAPES.length
+          )
+        ]
+      );
+
+    this.isT = isT;
+  }
+
+  static random() {
+    const index = Math.floor(
+      Math.random() * SHAPES.length
+    );
+
+    return new Piece(
+      structuredClone(SHAPES[index]),
+      index === 2
+    );
   }
 
   rotate() {

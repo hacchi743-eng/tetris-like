@@ -3,8 +3,8 @@ import { GameScene } from "./scene/GameScene";
 
 new Phaser.Game({
   type: Phaser.AUTO,
-  width: 360,
-  height: 640,
+  width: 420,
+  height: 760,
 
   scale: {
     mode: Phaser.Scale.FIT,

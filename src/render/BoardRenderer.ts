@@ -8,119 +8,136 @@ export class BoardRenderer {
 
   graphics: Phaser.GameObjects.Graphics;
 
+  scoreText!: Phaser.GameObjects.Text;
+
+  pauseButton!: Phaser.GameObjects.Text;
+
+  retryButton?: Phaser.GameObjects.Text;
+
+  speedInput?: HTMLInputElement;
+
   cellSize = 28;
 
   offsetX = 40;
 
-  offsetY = 40;
+  offsetY = 80;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
 
-    this.graphics =
-      scene.add.graphics();
+    this.graphics = scene.add.graphics();
+
+    this.scoreText = scene.add.text(
+      20,
+      20,
+      "SCORE: 0",
+      {
+        fontSize: "24px",
+      }
+    );
+
+    this.pauseButton = scene.add.text(
+      300,
+      20,
+      "PAUSE",
+      {
+        fontSize: "24px",
+        backgroundColor: "#444",
+      }
+    )
+    .setPadding(10)
+    .setInteractive();
   }
 
   render(
     board: Board,
     piece: Piece,
     nextPiece: Piece,
-    gameOver: boolean
+    holdPiece: Piece | undefined,
+    gameOver: boolean,
+    score: number,
+    ghostY: number,
+    paused: boolean
   ) {
     this.graphics.clear();
 
-    this.drawGrid(board);
+    this.scoreText.setText(
+      `SCORE: ${score}`
+    );
 
-    this.drawBoard(board);
-
-    this.drawPiece(piece);
-
-    this.drawNext(nextPiece);
-
-    if (gameOver) {
-      this.drawGameOver();
-    }
   }
 
-  drawGrid(board: Board) {
-    this.graphics.lineStyle(1, 0x333333);
-
-    for (let y = 0; y < board.height; y++) {
-      for (let x = 0; x < board.width; x++) {
-        this.graphics.strokeRect(
-          this.offsetX +
-            x * this.cellSize,
-
-          this.offsetY +
-            y * this.cellSize,
-
-          this.cellSize,
-
-          this.cellSize
-        );
+  drawPauseMenu(paused: boolean) {
+    if (!paused) {
+      if (this.retryButton) {
+        this.retryButton.destroy();
+        this.retryButton = undefined;
       }
+
+      if (this.speedInput) {
+        this.speedInput.remove();
+        this.speedInput = undefined;
+      }
+
+      return;
     }
-  }
 
-  drawBoard(board: Board) {
-    this.graphics.fillStyle(0x6666ff);
-
-    for (let y = 0; y < board.height; y++) {
-      for (let x = 0; x < board.width; x++) {
-        if (board.cells[y][x]) {
-          this.drawCell(x, y);
+    if (!this.retryButton) {
+      this.retryButton = this.scene.add.text(
+        140,
+        300,
+        "RETRY",
+        {
+          fontSize: "32px",
+          backgroundColor: "#880000",
         }
-      }
-    }
-  }
+      )
+      .setPadding(20)
+      .setInteractive();
 
-  drawPiece(piece: Piece) {
-    this.graphics.fillStyle(0x00ffcc);
+      this.speedInput = document.createElement(
+        "input"
+      );
 
-    for (const cell of piece.shape) {
-      this.drawCell(
-        piece.x + cell.x,
-        piece.y + cell.y
+      this.speedInput.type = "number";
+
+      this.speedInput.value = "500";
+
+      this.speedInput.style.position = "absolute";
+      this.speedInput.style.left = "20px";
+      this.speedInput.style.top = "80px";
+      this.speedInput.style.width = "100px";
+
+      document.body.appendChild(
+        this.speedInput
       );
     }
   }
 
-  drawNext(piece: Piece) {
-    this.graphics.fillStyle(0xffcc00);
+  gameOverText?: Phaser.GameObjects.Text;
 
-    for (const cell of piece.shape) {
-      this.graphics.fillRect(
-        340 + cell.x * 20,
-        80 + cell.y * 20,
-        18,
-        18
-      );
-    }
-  }
-
-  drawCell(x: number, y: number) {
-    this.graphics.fillRect(
-      this.offsetX +
-        x * this.cellSize,
-
-      this.offsetY +
-        y * this.cellSize,
-
-      this.cellSize,
-
-      this.cellSize
-    );
-  }
-
-  drawGameOver() {
-    this.scene.add.text(
-      90,
-      300,
-      "GAME OVER",
-      {
-        fontSize: "32px",
-        color: "#ff0000",
+  drawGameOver(gameOver: boolean) {
+    if (!gameOver) {
+      if (this.gameOverText) {
+        this.gameOverText.destroy();
+        this.gameOverText = undefined;
       }
-    );
+
+      return;
+    }
+
+    if (!this.gameOverText) {
+      this.gameOverText = this.scene.add
+        .text(
+          this.scene.cameras.main.centerX,
+          this.scene.cameras.main.centerY,
+          "GAME OVER",
+          {
+            fontSize: "40px",
+            color: "#ff0000",
+          }
+        )
+        .setOrigin(0.5);
+    }
   }
 }
