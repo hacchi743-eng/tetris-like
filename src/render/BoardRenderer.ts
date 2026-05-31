@@ -114,7 +114,7 @@ export class BoardRenderer {
     }
   }
 
- drawBoard(board: Board) {
+  drawBoard(board: Board) {
     this.graphics.fillStyle(0x6666ff);
 
     for (let y = 0; y < board.height; y++) {
@@ -137,7 +137,7 @@ export class BoardRenderer {
     }
   }
 
- drawGhost(piece: Piece, ghostY: number) {
+  drawGhost(piece: Piece, ghostY: number) {
     this.graphics.fillStyle(0xffffff, 0.3);
 
     for (const cell of piece.shape) {
@@ -213,7 +213,7 @@ export class BoardRenderer {
         label: "▽",
         x: 220,
         y: 680,
-        width: 110,
+        width: 90,
         height: 60,
       },
 
@@ -221,13 +221,13 @@ export class BoardRenderer {
         label: "↻",
         x: 340,
         y: 660,
-        width: 70,
-        height: 100,
+        width: 90,
+        height: 60,
       },
 
       {
         label: "HOLD",
-        x: 220,
+        x: 320,
         y: 610,
         width: 110,
         height: 50,
@@ -346,7 +346,7 @@ export class BoardRenderer {
         this.scene.add.text(
           210,
           380,
-          `SPEED ${speedLevel}`,
+          `SPEED \n${speedLevel}`,
           {
             fontSize: "28px",
           }
