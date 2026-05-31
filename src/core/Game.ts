@@ -26,6 +26,12 @@ export class Game {
 
   lastRotate = false;
 
+  combo = 0;
+
+  backToBack = false;
+
+  level = 1;
+
   get fallInterval() {
     // 1～20段階
     // 数字大きいほど速い
@@ -322,16 +328,96 @@ export class Game {
       );
     }
 
-    if (cleared > 0) {
-      this.score += cleared * 100;
+    if (cleared === 0) {
+      this.combo = 0;
+      this.lastRotate = false;
+      return;
+    }
 
-      if (
-        this.piece.isT &&
-        this.lastRotate
-      ) {
-        this.score += 400;
+    /*
+      COMBO
+    */
+
+    this.combo++;
+
+    /*
+      基本点
+    */
+
+    let gainedScore = 0;
+
+    const isTSpin =
+      this.piece.isT &&
+      this.lastRotate;
+
+    if (isTSpin) {
+      switch (cleared) {
+        case 1:
+          gainedScore = 800;
+          break;
+
+        case 2:
+          gainedScore = 1200;
+          break;
+
+        case 3:
+          gainedScore = 1600;
+          break;
+      }
+    } else {
+      switch (cleared) {
+        case 1:
+          gainedScore = 100;
+          break;
+
+        case 2:
+          gainedScore = 300;
+          break;
+
+        case 3:
+          gainedScore = 500;
+          break;
+
+        case 4:
+          gainedScore = 800;
+          break;
       }
     }
+
+    /*
+      Back To Back
+    */
+
+    const difficultMove =
+      isTSpin || cleared === 4;
+
+    if (
+      difficultMove &&
+      this.backToBack
+    ) {
+      gainedScore =
+        Math.floor(
+          gainedScore * 1.5
+        );
+    }
+
+    this.backToBack =
+      difficultMove;
+
+    /*
+      Combo Bonus
+    */
+
+    gainedScore +=
+      this.combo * 50;
+
+    /*
+      Level補正
+    */
+
+    gainedScore *= this.level;
+
+    this.score += gainedScore;
 
     this.lastRotate = false;
   }
