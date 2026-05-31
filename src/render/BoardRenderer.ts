@@ -36,17 +36,20 @@ export class BoardRenderer {
       }
     );
 
-    this.pauseButton = scene.add.text(
-      300,
-      20,
-      "PAUSE",
-      {
-        fontSize: "24px",
-        backgroundColor: "#444",
-      }
-    )
-    .setPadding(10)
-    .setInteractive();
+
+    this.pauseButton = scene.add
+      .text(
+        300,
+        20,
+        "PAUSE",
+        {
+          fontSize: "24px",
+          backgroundColor: "#444",
+        }
+      )
+      .setPadding(10)
+      .setName("PAUSE")
+      .setInteractive();
   }
 
   render(
@@ -180,32 +183,32 @@ drawButtons() {
 
   const buttons = [
     {
-      label: "LEFT",
+      label: "◁",
       x: 20,
       y: 680,
     },
 
     {
-      label: "RIGHT",
+      label: "▷",
       x: 120,
       y: 680,
     },
 
     {
-      label: "DROP",
+      label: "▽",
       x: 220,
       y: 680,
     },
 
     {
-      label: "ROTATE",
+      label: "↻",
       x: 320,
       y: 680,
     },
 
     {
       label: "HOLD",
-      x: 220,
+      x: 320,
       y: 610,
     },
   ];
@@ -227,8 +230,6 @@ drawButtons() {
   });
 }
 
-
-// BoardRenderer.ts
 
 drawPauseMenu(
   paused: boolean,
@@ -264,6 +265,7 @@ drawPauseMenu(
           }
         )
         .setPadding(20)
+        .setName("RETRY")
         .setInteractive();
 
     this.speedInput =
@@ -362,6 +364,7 @@ drawPauseMenu(
           )
           .setOrigin(0.5)
           .setPadding(20)
+          .setName("RETRY")
           .setInteractive();
     }
   }

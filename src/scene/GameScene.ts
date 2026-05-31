@@ -71,8 +71,6 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
-// GameScene.ts
-
 setupButtons() {
   this.input.on(
     "gameobjectdown",
@@ -100,14 +98,14 @@ setupButtons() {
         case "HOLD":
           this.gameLogic.hold();
           break;
-      }
 
-      if (obj.text === "PAUSE") {
-        this.gameLogic.togglePause();
-      }
+        case "PAUSE":
+          this.gameLogic.togglePause();
+          break;
 
-      if (obj.text === "RETRY") {
-        this.gameLogic.restart();
+        case "RETRY":
+          this.gameLogic.restart();
+          break;
       }
     }
   );
