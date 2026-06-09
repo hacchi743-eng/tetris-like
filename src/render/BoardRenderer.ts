@@ -24,6 +24,16 @@ export class BoardRenderer {
 
   pausePanel?: Phaser.GameObjects.Rectangle;
 
+  leftButton?: Phaser.GameObjects.Rectangle;
+
+  rightButton?: Phaser.GameObjects.Rectangle;
+
+  downButton?: Phaser.GameObjects.Rectangle;
+
+  rotateButton?: Phaser.GameObjects.Rectangle;
+
+  holdButton?: Phaser.GameObjects.Rectangle;
+
   cellSize = 18;
 
   offsetX = 40;
@@ -252,6 +262,28 @@ export class BoardRenderer {
         .setInteractive();
 
       bg.setData("action", b.label);
+
+      switch (b.label) {
+        case "◁":
+          this.leftButton = bg;
+          break;
+
+        case "▷":
+          this.rightButton = bg;
+          break;
+
+        case "▽":
+          this.downButton = bg;
+          break;
+
+        case "↻":
+          this.rotateButton = bg;
+          break;
+
+        case "HOLD":
+          this.holdButton = bg;
+          break;
+      }
 
       this.scene.add
         .text(

@@ -9,6 +9,16 @@ export class GameScene extends Phaser.Scene {
 
   boardRenderer!: BoardRenderer;
 
+  private leftDasTimeout?: number;
+  private rightDasTimeout?: number;
+
+  private leftRepeatTimer?: number;
+  private rightRepeatTimer?: number;
+
+  private downRepeatTimer?: number;
+
+  private lastDownTap = 0;
+
   create() {
     this.gameLogic = new Game();
 
@@ -18,6 +28,134 @@ export class GameScene extends Phaser.Scene {
     this.setupKeyboard();
 
     this.setupButtons();
+
+    this.boardRenderer.drawButtons();
+
+   this.setupTouchControls();
+  }
+
+  setupTouchControls() {
+    const left =
+      this.boardRenderer.leftButton;
+
+    const right =
+      this.boardRenderer.rightButton;
+
+    const down =
+      this.boardRenderer.downButton;
+
+    const rotate =
+      this.boardRenderer.rotateButton;
+
+    const hold =
+      this.boardRenderer.holdButton;
+
+    if (
+      !left ||
+      !right ||
+      !down ||
+      !rotate ||
+      !hold
+    ) {
+      return;
+    }
+
+    left.on("pointerdown", () => {
+      this.gameLogic.moveLeft();
+
+      this.leftDasTimeout =
+        window.setTimeout(() => {
+          this.leftRepeatTimer =
+            window.setInterval(() => {
+              this.gameLogic.moveLeft();
+            }, 50);
+        }, 180);
+    });
+
+    right.on("pointerdown", () => {
+      this.gameLogic.moveRight();
+
+      this.rightDasTimeout =
+        window.setTimeout(() => {
+          this.rightRepeatTimer =
+            window.setInterval(() => {
+              this.gameLogic.moveRight();
+            }, 50);
+        }, 180);
+    });
+
+    down.on("pointerdown", () => {
+      const now = Date.now();
+
+      if (
+        now - this.lastDownTap <
+        250
+      ) {
+        this.gameLogic.hardDrop();
+        return;
+      }
+
+      this.lastDownTap = now;
+
+      this.gameLogic.moveDown();
+
+      this.downRepeatTimer =
+        window.setInterval(() => {
+          this.gameLogic.moveDown();
+        }, 40);
+    });
+
+    rotate.on("pointerdown", () => {
+      this.gameLogic.rotate();
+    });
+
+    hold.on("pointerdown", () => {
+      this.gameLogic.hold();
+    });
+
+    const stopLeft = () => {
+      clearTimeout(
+        this.leftDasTimeout
+      );
+
+      clearInterval(
+        this.leftRepeatTimer
+      );
+    };
+
+    const stopRight = () => {
+      clearTimeout(
+        this.rightDasTimeout
+      );
+
+      clearInterval(
+        this.rightRepeatTimer
+      );
+    };
+
+    const stopDown = () => {
+      clearInterval(
+        this.downRepeatTimer
+      );
+    };
+
+    left.on("pointerup", stopLeft);
+    left.on("pointerout", stopLeft);
+
+    right.on("pointerup", stopRight);
+    right.on("pointerout", stopRight);
+
+    down.on("pointerup", stopDown);
+    down.on("pointerout", stopDown);
+
+    this.input.on(
+      "pointerup",
+      () => {
+        stopLeft();
+        stopRight();
+        stopDown();
+      }
+    );
   }
 
   setupKeyboard() {
