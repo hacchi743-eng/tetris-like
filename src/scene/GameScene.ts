@@ -85,24 +85,38 @@ export class GameScene extends Phaser.Scene {
     });
 
     down.on("pointerdown", () => {
-      const now = Date.now();
-
-      if (
-        now - this.lastDownTap <
-        250
-      ) {
-        this.gameLogic.hardDrop();
-        return;
-      }
-
-      this.lastDownTap = now;
-
       this.gameLogic.moveDown();
 
       this.downRepeatTimer =
         window.setInterval(() => {
           this.gameLogic.moveDown();
         }, 40);
+    });
+
+    down.on("pointerup", () => {
+      clearInterval(
+        this.downRepeatTimer
+      );
+
+      const now = Date.now();
+
+      if (
+        now - this.lastDownTap < 250
+      ) {
+        this.lastDownTap = 0;
+
+        this.gameLogic.hardDrop();
+
+        return;
+      }
+
+      this.lastDownTap = now;
+    });
+
+    down.on("pointerout", () => {
+      clearInterval(
+        this.downRepeatTimer
+      );
     });
 
     rotate.on("pointerdown", () => {
@@ -220,21 +234,6 @@ export class GameScene extends Phaser.Scene {
           obj.getData?.("action");
 
         switch (action) {
-          case "◁":
-            this.gameLogic.moveLeft();
-            break;
-
-          case "▷":
-            this.gameLogic.moveRight();
-            break;
-
-          case "▽":
-            this.gameLogic.hardDrop();
-            break;
-
-          case "↻":
-            this.gameLogic.rotate();
-            break;
 
           case "HOLD":
             this.gameLogic.hold();
